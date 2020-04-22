@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+
+<div id="content">
+
+    <!-- Topbar -->
+    {% include 'partials/_topbar.html' %}
+    <!-- End of Topbar -->
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+      <!-- Page Heading -->
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" data-page-length='25' id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>MAC</th>
+                    <th>Entry time</th>
+                    <th>Last seen</th>
+                    <th>Frequency</th>
+                    <th>More Info...</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>#</th>
+                    <th>MAC</th>
+                    <th>Entry time</th>
+                    <th>Last seen</th>
+                    <th>Frequency</th>
+                    <th>More Info...</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                {% for mac in mac_log %}
+                <tr>
+                  <td>{{mac.id}}</td>
+                  <td>{{mac.mac}}</td>
+                  <td>{{mac.enter_datetime | formatdatetime}}</td>
+                  <td>{{mac.last_seen | formatdatetime}}</td>
+                  <td>{{mac.hz }}</td>
+                  <td>
+                      <a href="{{ url_for('details', mac=mac.mac) }}">Details</a>
+                    </td>
+                </tr>
+              {% endfor %}
+                
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /.container-fluid -->
+
+    </div>
+    <!-- /.container-fluid -->
+
+</div>
+
+{% endblock %}

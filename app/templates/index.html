@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+
+<div id="content">
+    <!-- Topbar -->
+    {% include 'partials/_topbar.html' %}
+    <!-- End of Topbar -->
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+      <!-- Page Heading -->
+      <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h6 style="text-align: center;">Frequency of MAC's</h6>
+                <div style="width: 100%;">
+                    <canvas id="pie-chart" width="400" height="400"></canvas>
+                </div>
+            </div>
+            <div class="col-6">
+                <div style="width: 100%;">
+                    <canvas id="bar-hz" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /.container-fluid -->
+
+    </div>
+    <!-- /.container-fluid -->
+
+</div>
+{% block moreScripts %}
+    <script>
+        function dashboard() {
+            var xhttp = new XMLHttpRequest();
+            var pie
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+               d = JSON.parse(this.responseText);
+               pie = d.pie;
+               bar = d.bar;
+               console.log(pie)
+               data = {
+                datasets: [{
+                    data: pie.data,
+                    backgroundColor: [
+                    'rgba(55, 90, 22, 0.2)',
+                    'rgba(54, 166, 235, 0.2)',
+                    'rgba(255, 126, 86, 0.2)',
+                    'rgba(255, 93, 132, 0.2)',
+                    'rgba(54, 169, 235, 0.2)',
+                    'rgba(55, 226, 86, 0.2)',
+                    'rgba(255, 199, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                  ],
+                  borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                  ],
+                }],
+                labels: pie.label,
+              };
+              
+              var ctx = document.getElementById('pie-chart');
+              var myDoughnutChart = new Chart(ctx, {
+                  type: 'doughnut',
+                  data: data,
+                  //options: options
+              });
+      
+                var ctx2 = document.getElementById('bar-hz');
+                var myChartBar = new Chart(ctx2, {
+                type: 'horizontalBar',
+                data: {
+                    labels: bar.label,
+                    datasets: [{
+                        label: 'Duration in hours',
+                        data: bar.data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+        
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Recorded MAC\'s'
+                              },
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Duration in hours'
+                            },
+                          }]
+                    }
+                }
+            });
+
+              }
+            };
+            xhttp.open("GET", "http://127.0.0.1:5000/analytics", true);
+            xhttp.send();
+          }
+        dashboard();
+        </script>
+{% endblock moreScripts %}
+
+{% endblock %}

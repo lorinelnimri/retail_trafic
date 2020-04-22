@@ -1,0 +1,80 @@
+# loring_2.0.py
+
+from scapy.all import sniff, Dot11
+from db import Lorin
+
+Importing the packages that would be needed oncec the appplication is initalized
+
+Scapy is a packet manipulation tool for computer networks,  It can forge or decode packets, send them on the wire, capture them, 
+and match requests and replies. It can also handle tasks like scanning, tracerouting, probing, unit tests, attacks, and network discovery.
+
+db is a package that stored the captured MAC fromt he probes and saves them to a database.
+
+
+
+Here we instantiate the class created in db package.
+
+data_base = Lorin()
+
+
+create a function to sort and manipluate the probe request recided.
+
+def handle_packet(pkt):
+    checking it the packet has a Dot11 (Wireless LAN) layer
+    if not pkt.haslayer(Dot11):
+        
+        making sure that the signals we are getting are actutually probe request and nothing else.
+        if pkt.type == 0 and pkt.subtype == 4: 
+            
+            colect the MAC as well as the SSID and save it to the database.
+
+            mac = pkt.addr2.upper()
+            ssid = pkt.info
+            data_base.insert_update_log(mac)
+            print(f'Device with MAC: {mac} is probing for SSID: {ssid}')
+
+
+sniff(iface='mon0', prn=handle_packet) Run the sniffer program from scapy.
+
+code used for the sniffer is gotten from this youtube videos. https://www.youtube.com/watch?v=hrbI08iulzA
+
+
+# db package
+
+the Lorin class is initalized and database connection is created here. 
+
+the init_db method will create the two tables  needed (probes, and mac_log) if they dont' already exits, once the tables are creatd the insert_update_log method can be called at will. 
+ - probes keeps track of the time a mac addr was first seen and when last it was
+ - the mac_log keeps track of how offen a MAC addr is logged
+
+ the insert_update_log method does the following
+    - check the probes and mac log tables to see if the current mac addr exits
+        - if it does, frequency is updated as well as the last seen time stamp
+            - and then check if the last seen is more than 8 hours, if so the exited flag is set true and a new row may be created
+        - if it doesn't,  an new recored is created
+    - if it doesn't exits we create a new probe and mac_log recored 
+
+    and we are ready for the next time we see this same MAC address. 
+
+
+
+# web - app
+The web app was created with flask and jinja.
+
+there are five endpoints to the web app in total. 
+ 
+ the home page `/` this retuns the list of all Devices recored so far so good and also displays
+ a little graph to the the frequency and duration of the last 15 recored decices
+
+ /macs, this displays all the MAC recored in a table with a link to view details of that MAC which would show a time graph of the time duration of that MAC.
+
+ /mac/<mac> this show details about the MAC which I expained above. 
+
+ /analytics this returns a summary of the frequency and duration of the MAC so that it can be displayed in a graph. 
+
+ /analytics/<mac> this retuns analytics for on specific MAC
+
+
+for the graphs used in the web app, I used  Chart.js.
+
+I also created a template filter so I can probperly parse data time coming from the db so Chart.js can process it well.

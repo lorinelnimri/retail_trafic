@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %} Lorin IO - Frequency and ducation {% endblock %}
+
+{% block content %}
+
+   <!-- Begin Page Content -->
+   <div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="card-body">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Frequency and Duration</h1>
+      </div>
+      <h6 id='mac' style="text-transform: uppercase;">FA:43</h6>
+      <div style="width: 70%; margin: 0 auto;">
+        <canvas class="my-4 w-100" id="bar-duration" width="500" height="380"></canvas>
+      </div>
+    </div>
+    </div>
+
+
+
+{% block moreScripts %}
+
+  <script>
+    document.getElementById('mac').innerText = location.href.split('/')[4];
+
+    function mee() {
+      var xhttp = new XMLHttpRequest();
+      var pie
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+         d = JSON.parse(this.responseText);
+         Chart.defaults.global.defaultColor = 'rgba(255, 99, 132, 0.2)';
+         var ctx2 = document.getElementById('bar-duration');
+                var myChartBar = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: d.label,
+                    datasets: [{
+                        label: 'Duration in hours',
+                        data: d.data,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Duration in hours'
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }],
+                        xAxes: [{
+                          scaleLabel: {
+                            display: true,
+                            labelString: 'Initial Entry date and time'
+                          },
+                        }]
+                    }
+                }
+            });
+        }
+      }
+      xhttp.open("GET", `http://127.0.0.1:5000/analytics/${location.href.split('/')[4]}`, true);
+      xhttp.send();
+    }
+    mee()
+  </script>
+
+{% endblock moreScripts %}
+
+{% endblock %}
