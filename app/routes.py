@@ -47,7 +47,7 @@ def analytics(mac=None):
 
             enter_datetime = datetime.strptime(mac[2], '%Y-%m-%d %H:%M:%S.%f')
             last_seen = datetime.strptime(mac[3], '%Y-%m-%d %H:%M:%S.%f')
-            time_diff = divmod((last_seen - enter_datetime).total_seconds(), 60)
+            time_diff = divmod((last_seen - enter_datetime).total_seconds(), 3600)
             
             dt = datetime.strptime(mac[2], "%Y-%m-%d %H:%M:%S.%f")
             dt = dt.strftime('%B %d %Y - %I:%M %p')
@@ -80,7 +80,7 @@ def analytics(mac=None):
 
             label.append(mac[1].upper())
             data.append(mac[4])
-            time_diff.append(divmod((last_seen - enter_datetime).total_seconds(), 60)[0])
+            time_diff.append(divmod((last_seen - enter_datetime).total_seconds(), 3600)[0])
 
         return make_response({
             # 'message': mac_data,
