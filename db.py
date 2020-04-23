@@ -46,7 +46,7 @@ class Lorin():
         """
 
         self.cur.execute(
-            f'SELECT * FROM probes WHERE mac="{mac}" AND exited=0 ')
+            f'SELECT * FROM probes WHERE mac="{mac}" AND exited="False" ')
         probe = self.cur.fetchone()
 
         self.cur.execute(f'SELECT * FROM mac_log WHERE mac="{mac}" ')
@@ -80,6 +80,7 @@ class Lorin():
                 print(e)
 
         if probe:
+            print('\033[91m' + f'Updating device {mac} last seen = {time_stamp}' + '\033[0m')
             try:
                 query = f'''
                     UPDATE probes set last_seen='{time_stamp}'
@@ -98,7 +99,7 @@ class Lorin():
             if time_diff_up_8h[0] > 4:
                 try:
                     query = f'''
-                        UPDATE probes set exited=1
+                        UPDATE probes set exited="True"
                         WHERE mac='{mac}' AND enter_datetime='{probe[2]}'
                     '''
                     self.cur.execute(query)
@@ -117,6 +118,7 @@ class Lorin():
                     self.con.rollback()
                     print(e)
         else:
+            print('\033[93m' + f'Logging a new device:  {mac} | last seen: {time_stamp}' + '\033[0m')
             new_log()
 
         self.con.commit()

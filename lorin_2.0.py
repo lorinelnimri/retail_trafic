@@ -10,12 +10,13 @@ def handle_packet(pkt):
     try:
         if not pkt.haslayer(Dot11):
             if pkt.type == 0 and pkt.subtype == 4:
-                mac = pkt.addr2.upper()
+                mac = pkt.addr2.strip().upper()
                 ssid = pkt.info
                 data_base.insert_update_log(mac)
                 print('\033[95m' + f'Device MAC:  {mac}  with SSID: {ssid}' + '\033[0m')
     except Exception as e:
-        print(print('\033[91m An errror occured :>> ' + e))
+        print('\033[91m An errror occured :>> ' + str(e))
+
 
 
 
@@ -25,7 +26,7 @@ def main():
     
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--interface', '-i', default='wlx00e04c3ae8c6', # Change mon0 to your monitor-mode enabled wifi interface
+    parser.add_argument('--interface', '-i', default='wlx00e04c3ae8c6', #change device name
 				help='monitor mode enabled interface')
     args = parser.parse_args()
     sniff(iface=args.interface, prn=handle_packet)
