@@ -39,7 +39,7 @@ class Lorin():
             ''')
         self.con.commit()
 
-    def insert_update_log(self, mac, x=4):
+    def insert_update_log(self, mac):
         """Insert or Update probe data.
 
         mac: str 01:01:01:01:01:01
