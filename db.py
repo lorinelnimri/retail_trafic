@@ -97,6 +97,7 @@ class Lorin():
                 (last_seen - enter_datetime).total_seconds(), 3600)
 
             if time_diff_up_8h[0] > 0.5:
+                print('\033[96m' + f'Updating Mac Graphs.... \033[0m')
                 try:
                     query = f'''
                         UPDATE probes set exited="True"
